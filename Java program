@@ -1,0 +1,131 @@
+package com.example.TicTacToe;
+
+import java.util.Scanner;
+
+public class TicTacToe {
+    private static char[][] board = new char[3][3];
+    private static char currentPlayer = 'X';
+
+    // Initialize the game board
+    public static void initializeBoard() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = '-';
+            }
+        }
+    }
+
+    // Display the game board
+    public static void printBoard() {
+        System.out.println("-------------");
+        for (int i = 0; i < 3; i++) {
+            System.out.print("| ");
+            for (int j = 0; j < 3; j++) {
+                System.out.print(board[i][j] + " | ");
+            }
+            System.out.println();
+            System.out.println("-------------");
+        }
+    }
+
+    // Check if the current move leads to a win
+    public static boolean checkWin() {
+        // Check rows and columns
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) {
+                return true;
+            }
+            if (board[0][i] == currentPlayer && board[1][i] == currentPlayer && board[2][i] == currentPlayer) {
+                return true;
+            }
+        }
+        // Check diagonals
+        if (board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer) {
+            return true;
+        }
+        if (board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer) {
+            return true;
+        }
+        return false;
+    }
+
+    // Check if the game is a draw
+    public static boolean checkDraw() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == '-') {
+                    return false; // Found an empty cell, so not a draw yet
+                }
+            }
+        }
+        return true; // No empty cells left, so it's a draw
+    }
+
+    // Switch the player
+    public static void switchPlayer() {
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+    }
+
+    // Make a move
+    public static boolean makeMove(int row, int col) {
+        if (row >= 0 && col >= 0 && row < 3 && col < 3 && board[row][col] == '-') {
+            board[row][col] = currentPlayer;
+            return true;
+        }
+        return false; // Invalid move
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean playAgain = true;
+
+        while (playAgain) {
+            initializeBoard();
+            boolean gameOver = false;
+
+            System.out.println("Welcome to Tic-Tac-Toe!");
+            printBoard();
+
+            while (!gameOver) {
+                int row, col;
+                System.out.println("Player " + currentPlayer + "'s turn. Enter your move (row [1-3] and column [1-3]):");
+                
+                // Taking row and column input from the player
+                row = scanner.nextInt() - 1; // Subtracting 1 to use 0-based indexing
+                col = scanner.nextInt() - 1;
+
+                // Check if the move is valid
+                if (!makeMove(row, col)) {
+                    System.out.println("This move is invalid! Please try again.");
+                    continue;
+                }
+
+                // Display the updated board
+                printBoard();
+
+                // Check if current player has won
+                if (checkWin()) {
+                    System.out.println("Player " + currentPlayer + " wins!");
+                    gameOver = true;
+                } else if (checkDraw()) {
+                    // Check if the game is a draw
+                    System.out.println("It's a draw!");
+                    gameOver = true;
+                } else {
+                    // Switch the player
+                    switchPlayer();
+                }
+            }
+
+            // Ask if they want to play again
+            System.out.println("Do you want to play again? (yes/no)");
+            String response = scanner.next();
+            if (response.equalsIgnoreCase("no")) {
+                playAgain = false;
+            }
+        }
+        
+        scanner.close();
+        System.out.println("Thanks for playing!");
+    }
+}
